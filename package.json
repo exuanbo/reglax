@@ -1,7 +1,7 @@
 {
   "name": "reglax",
   "version": "0.0.0",
-  "description": "☕Relax and write some Regex",
+  "description": "☕ Relax and write some Regex",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "types": "dist/types/index.d.ts",
