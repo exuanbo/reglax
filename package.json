@@ -10,7 +10,7 @@
   },
   "scripts": {
     "test": "mocha",
-    "pretest": "rollup -c && npm run format",
+    "pretest": "rollup -c",
     "build": "rimraf dist && npm test && tsc -d --emitDeclarationOnly --declarationDir dist/types",
     "format": "prettier-standard --format"
   },
@@ -18,9 +18,7 @@
     "type": "git",
     "url": "git+https://github.com/exuanbo/reglax.git"
   },
-  "keywords": [
-    "regex"
-  ],
+  "keywords": ["regex"],
   "author": {
     "name": "exuanbo",
     "email": "exuanbo@protonmail.com"
