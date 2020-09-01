@@ -13,22 +13,24 @@ const LAZY = '?'
 const GROUP = '?:'
 
 const whole = (text: string) => `${START}${text}${END}`
-const repeat = (text: string, start: number, end: number) => {
-  const finish = end === Infinity ? '' : end
+const repeat = (text: string, start?: number, end?: number) => {
+  const finish = end ? (end === Infinity ? '' : end) : undefined
 
-  return `${text}${start == null ? '' : `{${start}`}${
-    finish != null ? `,${finish}` : ''
-  }${start == null ? '' : '}'}`
+  return `${text}${start === undefined ? '' : `{${start}`}${
+    finish !== undefined ? `,${finish}` : ''
+  }${start === undefined ? '' : '}'}`
 }
 
 const numeric = repeat.bind(null, NUMBER)
 const alpha = repeat.bind(null, ALPHA)
 
-const and = (...rest: string[]) => rest.join('')
-const or = (...rest: string[]) => rest.join('|')
+const and = (...patterns: string[]) => patterns.join('')
+const or = (...patterns: string[]) => patterns.join('|')
 
-const wildcard = (text: string, lazy: boolean) => `${text}*${lazy ? LAZY : ''}`
-const extra = (text: string, lazy: boolean) => `${text}+${lazy ? LAZY : ''}`
+const wildcard = (text: string, isLazy: boolean = false) =>
+  `${text}*${isLazy ? LAZY : ''}`
+const extra = (text: string, isLazy: boolean = false) =>
+  `${text}+${isLazy ? LAZY : ''}`
 
 const capture = (text: string, name?: string) =>
   text && text.length
@@ -48,7 +50,7 @@ const looker = (bOa: boolean) =>
     negative: look(false, bOa)
   })
 
-const regex = (pattern: string | RegExp, flag: string) =>
+const regex = (pattern: string | RegExp, flag?: string) =>
   new RegExp(pattern, flag)
 
 export default {
