@@ -12,7 +12,7 @@
     "test": "mocha",
     "pretest": "rollup -c",
     "build": "rimraf dist && npm test && tsc -d --emitDeclarationOnly --declarationDir dist/types && npm run doc",
-    "doc": "rimraf docs && typedoc --theme minimal --out docs src",
+    "doc": "rimraf docs && typedoc --theme minimal --out docs src && touch docs/.nojekyll",
     "format": "prettier-standard --format"
   },
   "repository": {
