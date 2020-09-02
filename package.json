@@ -19,7 +19,7 @@
     "type": "git",
     "url": "git+https://github.com/exuanbo/reglax.git"
   },
-  "keywords": ["regex"],
+  "keywords": ["regex", "regular expression"],
   "author": {
     "name": "exuanbo",
     "email": "exuanbo@protonmail.com"
