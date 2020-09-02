@@ -1,4 +1,6 @@
 const {
+  matchers,
+  flags,
   whole,
   repeat,
   alpha,
@@ -9,10 +11,8 @@ const {
   extra,
   capture,
   group,
-  matchers,
-  regex,
-  flags,
-  look
+  look,
+  regex
 } = require('..')
 const expect = require('chai').expect
 
