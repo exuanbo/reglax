@@ -11,7 +11,8 @@
   "scripts": {
     "test": "mocha",
     "pretest": "rollup -c",
-    "build": "rimraf dist && npm test && tsc -d --emitDeclarationOnly --declarationDir dist/types",
+    "build": "rimraf dist && npm test && tsc -d --emitDeclarationOnly --declarationDir dist/types && npm run doc",
+    "doc": "rimraf docs && typedoc --theme minimal --out docs src",
     "format": "prettier-standard --format"
   },
   "repository": {
