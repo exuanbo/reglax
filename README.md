@@ -23,7 +23,7 @@ import reglax from 'reglax'
 
 ### API
 
-See generated [typedoc](https://exuanbo.github.io/reglax/).
+See generated [typedoc](https://exuanbo.github.io/reglax/modules/).
 
 ### Examples
 
