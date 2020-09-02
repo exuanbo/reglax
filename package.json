@@ -1,6 +1,6 @@
 {
   "name": "reglax",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "☕ Relax and write some Regex",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
@@ -19,7 +19,10 @@
     "type": "git",
     "url": "git+https://github.com/exuanbo/reglax.git"
   },
-  "keywords": ["regex", "regular expression"],
+  "keywords": [
+    "regex",
+    "regular expression"
+  ],
   "author": {
     "name": "exuanbo",
     "email": "exuanbo@protonmail.com"
