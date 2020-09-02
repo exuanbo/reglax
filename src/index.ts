@@ -1,19 +1,53 @@
-const ALPHA = '[A-z]'
-const NOT_ALPHA = '[^A-z]'
-const WORD = '\\w'
-const NOT_WORD = '\\W'
-const NUMBER = '\\d'
-const NOT_NUMBER = '\\D'
-const WHITE_SPACE = '\\s'
-const NOT_WHITE_SPACE = '\\S'
-const ANY = '.'
-const START = '^'
-const END = '$'
-const LAZY = '?'
-const GROUP = '?:'
+const matchers = {
+  ALL: capture(or('.', '\\s')),
+  ANY: '.',
+  LAZY: '?',
+  GROUP: '?:',
+  ALPHA: '[A-z]',
+  NUMBER: '\\d',
+  WORD: '\\w',
+  WHITE_SPACE: '\\s',
+  START: '^',
+  END: '$',
+  /**
+   * Matches opposite of `matchers`
+   *
+   * ```js
+   * regex(matchers.not.ALPHA) // -> '[^A-z]'
+   * ```
+   */
+  not: {
+    ALPHA: '[^A-z]',
+    NUMBER: '\\D',
+    WORD: '\\W',
+    WHITE_SPACE: '\\S'
+  }
+}
 
-const whole = (text: string) => `${START}${text}${END}`
-const repeat = (text: string, start?: number, end?: number) => {
+const flags = {
+  GLOBAL: 'g',
+  MULTI_LINE: 'm',
+  INSENSITIVE: 'i',
+  STICKY: 'y',
+  UNICODE: 'u'
+}
+
+/**
+ * ```js
+ * whole('sentence to match') // -> ^sentence to match$
+ * ```
+ */
+function whole (text: string) {
+  return `${matchers.START}${text}${matchers.END}`
+}
+/**
+ * ```js
+ * repeat('\\d') // -> \\d
+ * repeat('\\d', 8) // -> \\d{8}
+ * repeat('\\d', 1, 3) // -> \\d{1,3}
+ * repeat('\\d', 1, Infinity) // -> \\d{1,}
+ */
+function repeat (text: string, start?: number, end?: number) {
   const finish = end ? (end === Infinity ? '' : end) : undefined
 
   return `${text}${start === undefined ? '' : `{${start}`}${
@@ -21,39 +55,120 @@ const repeat = (text: string, start?: number, end?: number) => {
   }${start === undefined ? '' : '}'}`
 }
 
-const numeric = repeat.bind(null, NUMBER)
-const alpha = repeat.bind(null, ALPHA)
+/**
+ * Equivalent to `repeat.bind(null, '\\d')`
+ */
+const numeric = repeat.bind(null, matchers.NUMBER)
+/**
+ * Equivalent to `repeat.bind(null, '[A-z]')`
+ */
+const alpha = repeat.bind(null, matchers.ALPHA)
 
-const and = (...patterns: string[]) => patterns.join('')
-const or = (...patterns: string[]) => patterns.join('|')
+/**
+ * ```js
+ * and('a', 'b', 'c') // -> 'abc'
+ * ```
+ */
+function and (...patterns: string[]) {
+  return patterns.join('')
+}
+/**
+ * ```js
+ * or('a', 'b', 'c') // -> 'a|b|c'
+ * ```
+ */
+function or (...patterns: string[]) {
+  return patterns.join('|')
+}
 
-const wildcard = (text: string, isLazy: boolean = false) =>
-  `${text}*${isLazy ? LAZY : ''}`
-const extra = (text: string, isLazy: boolean = false) =>
-  `${text}+${isLazy ? LAZY : ''}`
+/**
+ * ```js
+ * wildcard('.') // -> '.*'
+ * wildcard('.', true) // -> '.*?'
+ * ```
+ */
+function wildcard (text: string, isLazy: boolean = false) {
+  return `${text}*${isLazy ? matchers.LAZY : ''}`
+}
+/**
+ * ```js
+ * extra('.', matchers.LAZY) // -> '.+?'
+ * extra('.', false) // -> '.+'
+ * ```
+ */
+function extra (text: string, isLazy: boolean = false) {
+  return `${text}+${isLazy ? matchers.LAZY : ''}`
+}
 
-const capture = (text: string, name?: string) =>
-  text && text.length
+/**
+ * ```js
+ * capture('\\d+?') // -> (\\d+?)
+ * ```
+ *
+ * or you can name your capture group with `capture(pattern, name)`
+ *
+ * ```js
+ * capture('\\d+?', 'number') // -> (?<number>\\d+?)
+ * ```
+ */
+function capture (text: string, name?: string) {
+  return text && text.length
     ? `(${typeof name === 'string' ? `?<${name}>` : ''}${text})`
     : ''
+}
 
-const group = (text: string) => (text && text.length ? `(${GROUP}${text})` : '')
+/**
+ * Similar to a capture(...), but won't keep the capture within the parentheses
+ *
+ * ```js
+ * group('.|\\s') // -> (?:.|\\s)
+ * ```
+ */
+function group (text: string) {
+  return text && text.length ? `(${matchers.GROUP}${text})` : ''
+}
 
-const ALL = capture(or(ANY, WHITE_SPACE))
+/**
+ * @ignore
+ */
+const lookPattern = (posOrNeg: boolean, behindOrAhead: boolean) => (
+  text: string
+) => `(?${behindOrAhead ? '<' : ''}${posOrNeg ? '=' : '!'}${text})`
 
-const look = (posOrNeg: boolean, behindOrAhead: boolean) => (text: string) =>
-  `(?${behindOrAhead ? '<' : ''}${posOrNeg ? '=' : '!'}${text})`
-
+/**
+ * @ignore
+ */
 const looker = (bOa: boolean) =>
-  Object.assign(look(true, bOa), {
-    positive: look(true, bOa),
-    negative: look(false, bOa)
+  Object.assign(lookPattern(true, bOa), {
+    positive: lookPattern(true, bOa),
+    negative: lookPattern(false, bOa)
   })
 
-const regex = (pattern: string | RegExp, flag?: string) =>
-  new RegExp(pattern, flag)
+/**
+ * Creates a [negative or positive look-ahead](https://www.stefanjudis.com/today-i-learned/the-complicated-syntax-of-lookaheads-in-javascript-regular-expressions/)
+ *
+ * ```js
+ * look.ahead.positive('Y') === look.ahead('Y') // -> '(?=y)'
+ * look.ahead.negative('Y') // -> '(?!y)'
+ * look.behind.positive('Y') === look.behind('Y') // -> '(?<=y)'
+ * look.behind.negative('Y') // -> '(?<!y)'
+ * ```
+ */
+const look = {
+  ahead: looker(false),
+  behind: looker(true)
+}
+
+/**
+ * Equal to `RegExp()` constructor
+ */
+function regex (pattern: string | RegExp, flag?: string) {
+  return new RegExp(pattern, flag)
+}
 
 export default {
+  matchers,
+  flags,
   whole,
   repeat,
   alpha,
@@ -64,34 +179,6 @@ export default {
   extra,
   capture,
   group,
-  look: {
-    ahead: looker(false),
-    behind: looker(true)
-  },
-  matchers: {
-    ALL,
-    ANY,
-    LAZY,
-    GROUP,
-    ALPHA,
-    NUMBER,
-    WORD,
-    WHITE_SPACE,
-    START,
-    END,
-    not: {
-      ALPHA: NOT_ALPHA,
-      NUMBER: NOT_NUMBER,
-      WORD: NOT_WORD,
-      WHITE_SPACE: NOT_WHITE_SPACE
-    }
-  },
-  flags: {
-    GLOBAL: 'g',
-    MULTI_LINE: 'm',
-    INSENSITIVE: 'i',
-    STICKY: 'y',
-    UNICODE: 'u'
-  },
+  look,
   regex
 }
