@@ -73,3 +73,11 @@ regex(
 
 // -> /((fragment|query|mutation|subscription)\s+\w+\s+(on\s+\w+)*)\s*(({(\s|\w|(".*")|:|,|\.|\)|\()+)+(}(\s|\w|(".*")|:|,|\.|\)|\()+)+)+}/g
 ```
+
+## License
+
+[MIT](https://github.com/exuanbo/reglax/blob/master/LICENSE)
+
+## Donate
+
+<a href="https://www.buymeacoffee.com/exuanbo" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/lato-orange.png" alt="Buy Me A Coffee" height="38.25px" width="162.75px"></a>
