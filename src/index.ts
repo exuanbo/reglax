@@ -166,7 +166,7 @@ function regex (pattern: string | RegExp, flag?: string) {
   return new RegExp(pattern, flag)
 }
 
-export default {
+export {
   matchers,
   flags,
   whole,
