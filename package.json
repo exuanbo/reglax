@@ -33,7 +33,7 @@
   },
   "homepage": "https://github.com/exuanbo/reglax#readme",
   "devDependencies": {
-    "@rollup/plugin-typescript": "6.1.0",
+    "@rollup/plugin-typescript": "11.1.6",
     "chai": "4.2.0",
     "mocha": "8.2.1",
     "prettier-standard": "16.4.1",
